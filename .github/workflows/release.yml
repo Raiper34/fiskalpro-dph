@@ -1,0 +1,70 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build Angular app
+        run: |
+          npx ng build --configuration production
+          cp public/favicon.ico ../www/
+        working-directory: frontend
+
+      - name: Download Neutralino binaries and client library
+        run: npx --yes @neutralinojs/neu update
+
+      - name: Package Neutralino app
+        run: npx --yes @neutralinojs/neu build
+
+      - name: Create release archives
+        run: |
+          set -e
+          NAME=fiskalpro-dph
+          OUT=release
+          mkdir -p "$OUT" stage/windows stage/linux
+
+          cp dist/$NAME/$NAME-win_x64.exe dist/$NAME/resources.neu stage/windows/
+          cp dist/$NAME/$NAME-linux_x64 dist/$NAME/resources.neu stage/linux/
+          chmod +x stage/linux/$NAME-linux_x64
+
+          (cd stage/windows && zip -r "../../$OUT/$NAME-windows-x64.zip" .)
+          (cd stage/linux && zip -r "../../$OUT/$NAME-linux-x64.zip" .)
+
+      - name: Compute version
+        id: version
+        run: |
+          BASE=$(node -p "require('./package.json').version")
+          echo "tag=v${BASE}-build.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: FiskalPro DPH ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
+          files: release/*.zip
