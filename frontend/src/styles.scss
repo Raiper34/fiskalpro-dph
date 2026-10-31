@@ -1,0 +1,120 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+body {
+  background: var(--p-surface-ground);
+  color: var(--p-text-color);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--p-surface-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--p-surface-300);
+  border-radius: 3px;
+
+  &:hover {
+    background: var(--p-surface-400);
+  }
+}
+
+.w-full {
+  width: 100%;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+@media print {
+  html, body, app-root, app-main-page {
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  .app-wrapper {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: white !important;
+  }
+
+  .app-wrapper > *:not(#print-area) {
+    display: none !important;
+  }
+
+  #print-area {
+    display: block !important;
+    position: static;
+    width: 100%;
+    background: white !important;
+    color: black !important;
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 11px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 8px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 2px 4px;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f0f0 !important;
+      font-weight: 600;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    tr:nth-child(even) td {
+      background: #f9f9f9 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+  }
+
+  @page {
+    margin: 8mm;
+    size: A4 landscape;
+  }
+}

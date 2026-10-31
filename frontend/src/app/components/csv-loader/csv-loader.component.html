@@ -1,0 +1,40 @@
+<div class="csv-loader">
+  <div
+    class="drop-zone"
+    [class.dragging]="isDragging"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+    (click)="triggerFileInput()">
+
+    <input
+      id="csv-file-input"
+      type="file"
+      accept=".csv"
+      style="display:none"
+      (change)="onFileSelected($event)">
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <p-progressSpinner strokeWidth="4" animationDuration="0.8s" />
+        <p>Načítavanie súboru...</p>
+      </div>
+    } @else {
+      <div class="idle-state">
+        <div class="drop-icon">
+          <i class="pi pi-cloud-upload"></i>
+        </div>
+        <h3>Presuňte CSV súbor sem</h3>
+        <p>alebo kliknite pre výber zo súborového systému</p>
+        <div class="file-hint">
+          <i class="pi pi-info-circle"></i>
+          Podporovaný formát: <strong>.csv</strong>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <p-message severity="error" [text]="errorMessage" styleClass="mt-3 w-full" />
+  }
+</div>

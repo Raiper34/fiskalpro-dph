@@ -1,0 +1,118 @@
+<div class="app-wrapper">
+  <p-toast position="top-right" />
+
+  <div class="app-header">
+    <div class="header-brand">
+      <div class="brand-logo">
+        <i class="pi pi-file-excel"></i>
+      </div>
+      <div class="brand-text">
+        <span class="brand-title">FiskalPro DPH</span>
+        <span class="brand-subtitle">CSV Export Nástroj</span>
+      </div>
+    </div>
+
+    @if (csvData) {
+      <div class="header-file-info">
+        <i class="pi pi-file"></i>
+        <span class="file-name">{{ csvData.fileName }}</span>
+        <span class="row-count">{{ csvData.rows.length }} riadkov</span>
+      </div>
+
+      <div class="header-date-filter">
+        <i class="pi pi-calendar"></i>
+        <p-datepicker
+          [(ngModel)]="filterDate"
+          (ngModelChange)="onFilterDateChange($event)"
+          dateFormat="dd.mm.yy"
+          placeholder="Filtrovať od dátumu..."
+          [showClear]="true"
+          [showButtonBar]="true"
+          appendTo="body"
+          styleClass="date-filter-input">
+        </p-datepicker>
+      </div>
+
+      <div class="header-actions">
+        <button pButton
+          icon="pi pi-refresh"
+          label="Načítať nový súbor"
+          severity="secondary"
+          size="small"
+          (click)="loadNewFile()">
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="app-content">
+    @if (!csvData) {
+      <div class="loader-wrapper">
+        <app-csv-loader (fileLoaded)="onFileLoaded($event)" />
+      </div>
+    } @else {
+      <app-preview-table
+        [csvData]="csvData"
+        [selectedColumns]="selectedColumns"
+        [selectedRowIndices]="selectedRowIndices"
+        (selectedColumnsChange)="onSelectedColumnsChange($event)"
+        (selectedRowIndicesChange)="onSelectedRowsChange($event)" />
+    }
+  </div>
+
+  @if (csvData) {
+    <div class="export-toolbar">
+      <div class="toolbar-stats">
+        <span class="stat-item">
+          <i class="pi pi-check-square"></i>
+          <strong>{{ selectedColumns.length }}</strong>&nbsp;/ {{ csvData.headers.length }} stĺpcov
+        </span>
+        <span class="stat-divider">·</span>
+        <span class="stat-item">
+          <i class="pi pi-list"></i>
+          <strong>{{ selectedRowCount }}</strong>&nbsp;/ {{ csvData.rows.length }} riadkov
+        </span>
+      </div>
+      <div class="toolbar-buttons">
+        <button pButton
+          label="Tlačiť"
+          icon="pi pi-print"
+          severity="secondary"
+          [disabled]="selectedColumns.length === 0 || selectedRowCount === 0"
+          (click)="printCsv()">
+        </button>
+        <button pButton
+          label="Exportovať CSV"
+          icon="pi pi-download"
+          iconPos="right"
+          [disabled]="selectedColumns.length === 0 || selectedRowCount === 0"
+          (click)="exportCsv()">
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (isPrinting) {
+    <div id="print-area">
+      <h3>{{ csvData?.fileName }}</h3>
+      <table>
+        <thead>
+          <tr>
+            @for (col of printColumns; track col) {
+              <th>{{ col }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of printRows; track $index) {
+            <tr>
+              @for (col of printColumns; track col) {
+                <td>{{ row[col] }}</td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

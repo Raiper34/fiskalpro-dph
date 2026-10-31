@@ -1,0 +1,12 @@
+{
+  "name": "fiskalpro-dph",
+  "version": "1.0.0",
+  "description": "FiskalPro DPH – CSV Export nástroj",
+  "scripts": {
+    "build": "cd frontend && ng build --configuration production && cp public/favicon.ico ../www/",
+    "dev": "cd frontend && ng serve",
+    "app:run": "neu run",
+    "start": "npm run build && neu run",
+    "package": "npm run build && neu build"
+  }
+}

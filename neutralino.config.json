@@ -1,0 +1,34 @@
+{
+  "applicationId": "sk.fiskalpro.dph",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "documentRoot": "/www/browser/",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "nativeAllowList": [
+    "app.*",
+    "storage.*",
+    "filesystem.*",
+    "os.*"
+  ],
+  "modes": {
+    "window": {
+      "title": "FiskalPro DPH – CSV Export",
+      "width": 1100,
+      "height": 720,
+      "minWidth": 800,
+      "minHeight": 550,
+      "icon": "/www/favicon.ico",
+      "enableInspector": true
+    }
+  },
+  "cli": {
+    "binaryName": "fiskalpro-dph",
+    "resourcesPath": "/www/browser/",
+    "extensionsPath": "/extensions/",
+    "clientLibrary": "/www/browser/neutralino.js",
+    "binaryVersion": "6.8.0",
+    "clientVersion": "6.8.0"
+  }
+}

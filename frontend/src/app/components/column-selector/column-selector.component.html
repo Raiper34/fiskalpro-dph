@@ -1,0 +1,121 @@
+<div class="column-selector">
+
+  <div class="selector-header">
+    <div class="header-info">
+      <h3>Výber stĺpcov</h3>
+      <span class="count-badge">
+        {{ localSelected.length }} / {{ headers.length }} vybraných
+      </span>
+    </div>
+    <div class="header-actions">
+      <button pButton
+        [label]="allSelected ? 'Zrušiť všetky' : 'Vybrať všetky'"
+        [icon]="allSelected ? 'pi pi-times' : 'pi pi-check-square'"
+        severity="secondary"
+        size="small"
+        (click)="toggleAll()">
+      </button>
+      <button pButton
+        label="Načítať profil"
+        icon="pi pi-folder-open"
+        severity="secondary"
+        size="small"
+        [disabled]="profileNames.length === 0"
+        (click)="openLoadDialog()"
+        pTooltip="{{ profileNames.length === 0 ? 'Žiadne uložené profily' : '' }}">
+      </button>
+      <button pButton
+        label="Uložiť profil"
+        icon="pi pi-save"
+        severity="secondary"
+        size="small"
+        [disabled]="localSelected.length === 0"
+        (click)="openSaveDialog()">
+      </button>
+    </div>
+  </div>
+
+  <p-divider />
+
+  <div class="columns-grid">
+    @for (column of headers; track column) {
+      <div
+        class="column-item"
+        [class.selected]="isSelected(column)"
+        (click)="onColumnToggle(column)">
+        <p-checkbox
+          [binary]="true"
+          [ngModel]="isSelected(column)"
+          (ngModelChange)="onColumnToggle(column)"
+          (click)="$event.stopPropagation()">
+        </p-checkbox>
+        <span class="column-name" [title]="column">{{ column }}</span>
+      </div>
+    }
+  </div>
+
+</div>
+
+<p-dialog
+  header="Uložiť nastavenie stĺpcov"
+  [(visible)]="showSaveDialog"
+  [modal]="true"
+  [style]="{ width: '400px' }">
+  <div class="dialog-content">
+    <label class="dialog-label">Názov profilu</label>
+    <input
+      pInputText
+      type="text"
+      [(ngModel)]="newProfileName"
+      placeholder="napr. Faktúry 2024"
+      class="w-full"
+      (keyup.enter)="confirmSave()">
+    <p class="dialog-hint">
+      <i class="pi pi-info-circle"></i>
+      Profil si zapamätá {{ localSelected.length }} vybraných stĺpcov
+    </p>
+  </div>
+  <ng-template #footer>
+    <button pButton label="Zrušiť" severity="secondary" (click)="showSaveDialog = false"></button>
+    <button pButton label="Uložiť" icon="pi pi-save" [disabled]="!newProfileName.trim()" (click)="confirmSave()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Načítať profil"
+  [(visible)]="showLoadDialog"
+  [modal]="true"
+  [style]="{ width: '480px' }">
+  <div class="profiles-list">
+    @for (name of profileNames; track name) {
+      @let profile = getProfileInfo(name);
+      <div
+        class="profile-item"
+        [class.active]="selectedProfileToLoad === name"
+        (click)="selectedProfileToLoad = name">
+        <div class="profile-info">
+          <span class="profile-name">{{ name }}</span>
+          @if (profile) {
+            <span class="profile-meta">
+              {{ profile.selectedColumns.length }} stĺpcov •
+              {{ profile.lastModified | date:'d.M.yyyy' }}
+            </span>
+          }
+        </div>
+        <button
+          pButton
+          icon="pi pi-trash"
+          severity="danger"
+          size="small"
+          text
+          (click)="$event.stopPropagation(); deleteProfile(name)"
+          pTooltip="Odstrániť profil">
+        </button>
+      </div>
+    }
+  </div>
+  <ng-template #footer>
+    <button pButton label="Zrušiť" severity="secondary" (click)="showLoadDialog = false"></button>
+    <button pButton label="Načítať" icon="pi pi-check" [disabled]="!selectedProfileToLoad" (click)="confirmLoad()"></button>
+  </ng-template>
+</p-dialog>
