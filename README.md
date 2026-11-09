@@ -2,6 +2,10 @@
 
 A lightweight desktop application for filtering and exporting CSV columns. Built with Angular 21 and Neutralinojs, it lets you load any CSV file, select the columns you want to keep, preview the result, and save a clean export — all without a browser or a backend server.
 
+## Screenshot
+
+![FiskalPro DPH – CSV preview and export](docs/images/fiskalpro-dph.png)
+
 ## Features
 
 - **CSV loading** – drag-and-drop or file-picker; UTF-8 parsed via PapaParse
